@@ -1,6 +1,9 @@
 package models
 
-import "events.com/m/db"
+import (
+	"events.com/m/db"
+	"events.com/m/util"
+)
 
 type User struct {
 	ID       int64
@@ -18,7 +21,12 @@ func (user User) Save() error {
 
 	defer stmt.Close()
 
-	result, err := stmt.Exec(user.Email, user.Password)
+	hashedPassword, err := util.HashString(user.Password)
+	if err != nil {
+		return err
+	}
+
+	result, err := stmt.Exec(user.Email, hashedPassword)
 	if err != nil {
 		return err
 	}
