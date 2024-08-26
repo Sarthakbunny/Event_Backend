@@ -62,6 +62,8 @@ func (e Event) Delete(id int64) error {
 		return err
 	}
 
+	defer stmt.Close()
+
 	_, err = stmt.Exec(id)
 	if err != nil {
 		return err
