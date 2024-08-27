@@ -70,6 +70,28 @@ func (e *Event) Delete(id int64) error {
 	return nil
 }
 
+func (e *Event) Register(userId int64) error {
+	registerQuery := `INSERT INTO register_events (user_id, event_id) VALUES (?, ?)`
+	stmt, err := db.DB.Prepare(registerQuery)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(userId, e.ID)
+	return err
+}
+
+func (e *Event) CancelRegisteration(userId int64) error {
+	deleteRegisterQuery := `DELETE FROM register_events WHERE user_id = ? AND event_id = ?`
+	stmt, err := db.DB.Prepare(deleteRegisterQuery)
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.Exec(userId, e.ID)
+	return err
+}
+
 func GetAllEvents() ([]Event, error) {
 	selectAllEventsQuery := `SELECT * FROM events`
 	rows, err := db.DB.Query(selectAllEventsQuery)
