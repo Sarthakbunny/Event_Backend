@@ -12,7 +12,7 @@ type Event struct {
 	Description string    `binding:"required"`
 	Location    string    `binding:"required"`
 	DateTime    time.Time `binding:"required"`
-	UserId      int
+	UserId      int64
 }
 
 func (e *Event) Save() error {
@@ -36,7 +36,7 @@ func (e *Event) Save() error {
 	return err
 }
 
-func (e Event) Update() error {
+func (e *Event) Update() error {
 	updateQuery := `
 	UPDATE events
 	SET name = ?, description = ?, location = ?, dateTime = ?, user_id = ?
@@ -54,7 +54,7 @@ func (e Event) Update() error {
 	return nil
 }
 
-func (e Event) Delete(id int64) error {
+func (e *Event) Delete(id int64) error {
 	deleteQuery := `DELETE FROM events WHERE id = ?`
 	stmt, err := db.DB.Prepare(deleteQuery)
 	if err != nil {

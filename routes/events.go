@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"events.com/m/middlewares"
 	"events.com/m/models"
 	"github.com/gin-gonic/gin"
 )
@@ -38,6 +39,10 @@ func getEventByID(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
+	middlewares.Authenticate(context)
+
+	userId := context.GetInt64("userId")
+
 	var event models.Event
 	err := context.ShouldBindJSON(&event) //similar to scanf
 
@@ -46,7 +51,7 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
-	event.UserId = 1
+	event.UserId = userId
 	err = event.Save()
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "There was an error saving the event"})
